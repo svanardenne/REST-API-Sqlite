@@ -1,4 +1,4 @@
-const {Model, DataTypes} = require('sequelize');
+const {Model, DataTypes, HasMany} = require('sequelize');
 
 module.exports = (sequelize) => {
   class User extends Model {}
@@ -17,5 +17,13 @@ module.exports = (sequelize) => {
     }
   },
   {sequelize});
+
+  // Add associations
+  User.associate = (models) => {
+    User.hasMany(models.Course, {
+      foreignKey
+    });
+  }
+
   return User;
 }
