@@ -1,5 +1,6 @@
 const {Model, DataTypes} = require('sequelize');
 
+// Creates Course model
 module.exports = (sequelize) => {
   class Course extends Model {}
   Course.init({
@@ -19,9 +20,12 @@ module.exports = (sequelize) => {
   {sequelize});
 
   // Add associations
-  User.associate = (models) => {
+  Course.associate = (models) => {
     Course.belongsTo(models.User, {
-      foreignKey
+      foreignKey: {
+        fieldName: 'userId',
+        allowNull: false
+      }
     });
   }
 

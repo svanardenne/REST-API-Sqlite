@@ -1,5 +1,6 @@
 const {Model, DataTypes, HasMany} = require('sequelize');
 
+// Creates User model
 module.exports = (sequelize) => {
   class User extends Model {}
   User.init({
@@ -21,7 +22,10 @@ module.exports = (sequelize) => {
   // Add associations
   User.associate = (models) => {
     User.hasMany(models.Course, {
-      foreignKey
+      foreignKey: {
+        fieldName: 'userId',
+        allowNull: false
+      }
     });
   }
 
