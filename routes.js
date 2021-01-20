@@ -96,8 +96,21 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
     include: [
       {
         model: User,
-        as: 'User'
+        as: 'User',
+        attributes: [
+          'id',
+          'firstName',
+          'lastName',
+          'emailAddress'
+        ]
       }
+    ],
+    attributes: [
+      'id',
+      'title',
+      'description',
+      'estimatedTime',
+      'materialsNeeded'
     ]
   });
   res.status(200).json(course);
@@ -137,7 +150,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     // Creates new course, sets Location header to URI for
     // newly created course, returns 201 status code
     const newCourse = await Course.create(req.body);
-    res.location(`/courses/${newCourse.id}`).status(204).end();
+    res.location(`/courses/${newCourse.id}`).status(201).end();
   }
 }));
 
@@ -171,15 +184,12 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
     // Checks to see if the authenticated user is the creator of the course
     // and if true, updates the course
     if (course.userId === user.id) {
-      await course.destroy();
-      res.status(204).end();
+      // Updates corresponding course and returns 204 status code
+      await course.update(req.body);
+      res.location(`/courses/${req.params.id}`).status(204).end();
     } else {
-      res.status(400).json({error: 'Not the correct user'});
+      res.status(403).json({error: 'Not the correct user'});
     }
-
-    // Updates corresponding course and returns 204 status code
-    await course.update(req.body);
-    res.location(`/courses/${req.params.id}`).status(204).end();
   }
 }));
 
@@ -199,7 +209,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) =>
     await course.destroy();
     res.status(204).end();
   } else {
-    res.status(400).json({error: 'Not the correct user'});
+    res.status(403).json({error: 'Not the correct user'});
   }
 }));
 
