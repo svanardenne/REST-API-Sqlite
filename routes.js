@@ -47,9 +47,19 @@ router.post('/users', asyncHandler(async (req, res) => {
     // Return the validation errors to the client.
     res.status(400).json({errors});
   } else {
+    try {
       // Creates new user, sets Location header, and sets status to 204
       const newUser = await User.create(user);
       res.location('/').status(204).end();
+    } catch (error) {
+      if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
+        const errors = error.errors.map(err => err.message);
+        res.status(400).json({ errors });   
+      } else {
+        throw error;
+      }
+    }
+
   }
 }));
 
@@ -59,8 +69,21 @@ router.get('/courses', asyncHandler(async (req, res) => {
     include: [
       {
         model: User,
-        as: 'User'
+        as: 'User',
+        attributes: [
+          'id',
+          'firstName',
+          'lastName',
+          'emailAddress'
+        ]
       }
+    ],
+    attributes: [
+      'id',
+      'title',
+      'description',
+      'estimatedTime',
+      'materialsNeeded'
     ]
   });
   res.status(200).json(courses);
