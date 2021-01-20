@@ -74,15 +74,49 @@ router.get('/courses/:id', asyncHandler(async (req, res) => {
 // Creates new course, sets Location header to URI for
 // newly created course, returns 201 status code
 router.post('/courses', asyncHandler(async (req, res) => {
-  const newCourse = await Course.create(req.body);
-  res.location(`/courses/${newCourse.id}`).status(204).end();
+  const course = req.body;
+  const errors = [];
+
+  // Validates title exists
+  if (!course.title) {
+    errors.push('Please provide a value for "title"');
+  }
+
+  // Validates description exists
+  if (!course.description) {
+    errors.push('Please provide a value for "description"');
+  }
+
+  if (errors.length > 0) {
+    res.status(400).json({errors});
+  } else {
+    const newCourse = await Course.create(req.body);
+    res.location(`/courses/${newCourse.id}`).status(204).end();
+  }
 }));
 
 // Updates corresponding course and returns 204 status code
 router.put('/courses/:id', asyncHandler(async (req, res) => {
-  const course = await Course.findByPk(req.params.id);
-  await course.update(req.body);
-  res.location(`/courses/${req.params.id}`).status(204).end();
+  const course = req.body;
+  const errors = [];
+
+  // Validates title exists
+  if (!course.title) {
+    errors.push('Please provide a value for "title"');
+  }
+
+  // Validates description exists
+  if (!course.description) {
+    errors.push('Please provide a value for "description"');
+  }
+
+  if (errors.length > 0) {
+    res.status(400).json({errors});
+  } else {
+    const course = await Course.findByPk(req.params.id);
+    await course.update(req.body);
+    res.location(`/courses/${req.params.id}`).status(204).end();
+  }
 }));
 
 // Deletes the corresponding course and returns 204 status code
