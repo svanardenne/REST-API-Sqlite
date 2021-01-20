@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const {asyncHandler} = require('./middleware/asyncHandler');
 const {User, Course} = require('./models');
 const {authenticateUser} = require('./middleware/authentication');
+const auth = require('basic-auth');
 
 // Returns currently authenticated user
 router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
@@ -97,6 +98,15 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
   if (errors.length > 0) {
     res.status(400).json({errors});
   } else {
+    // Gets id from user and appends it as userId to req.body
+    const credentials = auth(req);
+    const user = await User.findOne({
+      where: {
+        emailAddress: credentials.name
+      }
+    });
+    const userId = user.id;
+    req.body.userId = userId;
     // Creates new course, sets Location header to URI for
     // newly created course, returns 201 status code
     const newCourse = await Course.create(req.body);
@@ -133,8 +143,20 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 // Deletes the corresponding course and returns 204 status code
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
   const course = await Course.findByPk(req.params.id);
-  await course.destroy();
-  res.status(204).end();
+  const credentials = auth(req);
+  const user = await User.findOne({
+    where: {
+      emailAddress: credentials.name
+    }
+  });
+  // Checks to see if the authenticated user is the creator of the course
+  // and if true, deletes the course
+  if (course.userId === user.id) {
+    await course.destroy();
+    res.status(204).end();
+  } else {
+    res.status(400).json({error: 'Not the correct user'});
+  }
 }));
 
 module.exports = router;
