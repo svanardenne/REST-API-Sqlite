@@ -1,3 +1,4 @@
+// Load modules
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -99,6 +100,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     res.status(400).json({errors});
   } else {
     // Gets id from user and appends it as userId to req.body
+    // So that the authenticated user is associated with the course
     const credentials = auth(req);
     const user = await User.findOne({
       where: {
@@ -107,6 +109,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res) => {
     });
     const userId = user.id;
     req.body.userId = userId;
+
     // Creates new course, sets Location header to URI for
     // newly created course, returns 201 status code
     const newCourse = await Course.create(req.body);
@@ -133,8 +136,24 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
   if (errors.length > 0) {
     res.status(400).json({errors});
   } else {
-    // Updates corresponding course and returns 204 status code
     const course = await Course.findByPk(req.params.id);
+    const credentials = auth(req);
+    const user = await User.findOne({
+      where: {
+        emailAddress: credentials.name
+      }
+    });
+
+    // Checks to see if the authenticated user is the creator of the course
+    // and if true, updates the course
+    if (course.userId === user.id) {
+      await course.destroy();
+      res.status(204).end();
+    } else {
+      res.status(400).json({error: 'Not the correct user'});
+    }
+
+    // Updates corresponding course and returns 204 status code
     await course.update(req.body);
     res.location(`/courses/${req.params.id}`).status(204).end();
   }
@@ -149,6 +168,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req, res) =>
       emailAddress: credentials.name
     }
   });
+
   // Checks to see if the authenticated user is the creator of the course
   // and if true, deletes the course
   if (course.userId === user.id) {

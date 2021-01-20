@@ -1,3 +1,4 @@
+// Load modules
 const {Model, DataTypes, HasMany} = require('sequelize');
 const bcrypt = require('bcryptjs');
 
@@ -26,6 +27,7 @@ module.exports = (sequelize) => {
     emailAddress: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notNull: {
           msg: 'Email name cannot be empty'

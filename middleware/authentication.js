@@ -1,3 +1,4 @@
+// Load modules
 const auth = require('basic-auth');
 const bcrypt = require('bcryptjs');
 const {User} = require('../models');

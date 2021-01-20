@@ -1,3 +1,4 @@
+// Load modules
 const {Model, DataTypes} = require('sequelize');
 
 // Creates Course model
