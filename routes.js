@@ -3,10 +3,15 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const {asyncHandler} = require('./middleware/asyncHandler');
 const {User, Course} = require('./models');
+const {authenticateUser} = require('./middleware/authentication');
 
 // Returns currently authenticated user
-router.get('/users', asyncHandler(async(req, res) => {
-  
+router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
+  const user = req.currentUser;
+  res.json({
+    name: `${user.firstName} ${user.lastName}`,
+    email: user.emailAddress
+  });
 }));
 
 // Alows creation of a new user and sets location
