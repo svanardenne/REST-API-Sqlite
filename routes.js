@@ -88,9 +88,12 @@ router.post('/courses', asyncHandler(async (req, res) => {
     errors.push('Please provide a value for "description"');
   }
 
+  // If any errors, set status to 204 and send error messages to client
   if (errors.length > 0) {
     res.status(400).json({errors});
   } else {
+    // Creates new course, sets Location header to URI for
+    // newly created course, returns 201 status code
     const newCourse = await Course.create(req.body);
     res.location(`/courses/${newCourse.id}`).status(204).end();
   }
@@ -111,9 +114,11 @@ router.put('/courses/:id', asyncHandler(async (req, res) => {
     errors.push('Please provide a value for "description"');
   }
 
+  // If any errors, set status to 204 and send error messages to client
   if (errors.length > 0) {
     res.status(400).json({errors});
   } else {
+    // Updates corresponding course and returns 204 status code
     const course = await Course.findByPk(req.params.id);
     await course.update(req.body);
     res.location(`/courses/${req.params.id}`).status(204).end();
