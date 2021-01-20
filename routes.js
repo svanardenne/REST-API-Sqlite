@@ -11,6 +11,7 @@ const auth = require('basic-auth');
 router.get('/users', authenticateUser, asyncHandler(async(req, res) => {
   const user = req.currentUser;
   res.json({
+    id: user.id,
     name: `${user.firstName} ${user.lastName}`,
     email: user.emailAddress
   });
@@ -50,7 +51,7 @@ router.post('/users', asyncHandler(async (req, res) => {
     try {
       // Creates new user, sets Location header, and sets status to 204
       const newUser = await User.create(user);
-      res.location('/').status(204).end();
+      res.location('/').status(201).end();
     } catch (error) {
       if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
         const errors = error.errors.map(err => err.message);
