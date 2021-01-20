@@ -11,8 +11,38 @@ router.get('/users', asyncHandler(async(req, res) => {
 // Alows creation of a new user and sets location
 // header to "/", returning a 201 HTTP status
 router.post('/users', asyncHandler(async (req, res) => {
-  const user = await User.create(req.body);
-  res.location('/').status(204).end();
+  const user = req.body;
+  const errors = [];
+
+  // Validates firstName exists
+  if (!user.firstName) {
+    errors.push('Please provide a value for "firstName"');
+  }
+
+  // Validates lastName exists
+  if (!user.lastName) {
+    errors.push('Please provide a value for "lastName"');
+  }
+
+  // Validates emailAddress exists
+  if (!user.emailAddress) {
+    errors.push('Please provide a value for "emailAddress"');
+  }
+
+  // Validates password exists
+  if (!user.password) {
+    errors.push('Please provide a value for "password"');
+  }
+
+  // If any errors, set status to 400 and send error messages to client
+  if (errors.length > 0) {
+    // Return the validation errors to the client.
+    res.status(400).json({errors});
+  } else {
+      // Creates new user, sets Location header, and sets status to 204
+      const newUser = await User.create(req.body);
+      res.location('/').status(204).end();
+  }
 }));
 
 // Returns a list of all courses and their associated users
