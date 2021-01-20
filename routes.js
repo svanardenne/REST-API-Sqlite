@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const {asyncHandler} = require('./middleware/asyncHandler');
 const {User, Course} = require('./models');
 
@@ -40,7 +41,7 @@ router.post('/users', asyncHandler(async (req, res) => {
     res.status(400).json({errors});
   } else {
       // Creates new user, sets Location header, and sets status to 204
-      const newUser = await User.create(req.body);
+      const newUser = await User.create(user);
       res.location('/').status(204).end();
   }
 }));

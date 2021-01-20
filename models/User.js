@@ -1,4 +1,5 @@
 const {Model, DataTypes, HasMany} = require('sequelize');
+const bcrypt = require('bcryptjs');
 
 // Creates User model
 module.exports = (sequelize) => {
@@ -42,9 +43,13 @@ module.exports = (sequelize) => {
           msg: 'Password name cannot be empty'
         },
         len: {
-          args: [8,20],
-          msg: 'Password must be between 8 and 20 characters long'
+          args: [8,100],
+          msg: 'Password must be at least 8 characters long'
         }
+      },
+      set(val) {
+        const hashedPassword = bcrypt.hashSync(val, 10);
+        this.setDataValue('password', hashedPassword);
       }
     }
   },
