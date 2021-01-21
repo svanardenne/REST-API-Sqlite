@@ -4,8 +4,11 @@ A REST API created using Node, Express, Sequelize, and Sqlite
 # Installation
 To install dependancies; run "npm install"
 
+
 # To Run
 To run this application, run "npm start".  The app runs on localhost:5000 or the server env port
+ - Running "npm start" creates the sqlite database
+ - Run "npm run seed" to seed the database with a few initial entries
 
 # Testing
 To test the API, download and install Postman and test out the various routes
