@@ -1,5 +1,7 @@
 # REST API for teachers
 A REST API created using Node, Express, Sequelize, and Sqlite
+Allows the creation of courses and users in a Sqlite database.
+Users can login using basic-auth credentials and create, updates, or delete courses
 
 # Installation
 To install dependancies; run "npm install"
