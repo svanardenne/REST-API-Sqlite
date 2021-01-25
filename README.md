@@ -4,13 +4,13 @@ Allows the creation of courses and users in a Sqlite database.
 Users can login using basic-auth credentials and create, read, update, or delete courses
 
 # Installation
-To install dependancies; run "npm install"
+To install dependancies, run ```npm install```
 
 
 # To Run
-To run this application, run "npm start".  The app runs on localhost:5000 or the server env port
+To run this application, run ```npm start```.  The app runs on localhost:5000 or the server env port
  - Running "npm start" creates the sqlite database
- - Run "npm run seed" to seed the database with a few initial entries
+ - Run ```npm run seed``` to seed the database with a few initial entries
 
 # Testing
 To test the API, download and install Postman and test out the various routes
